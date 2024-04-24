@@ -1,0 +1,91 @@
+﻿@model ProductDisplayModel
+@{
+
+}
+
+<div class="my-2">
+    <form asp-action="Index" class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            <label class="visually-hidden" for="categoryId">Categories</label>
+            <select class="form-select" id="categoryId" name="categoryId">
+                <option selected>Choose...</option>
+                @foreach (var catetogy in Model.Categories)
+                {
+                    <option selected="@(catetogy.Id == Model.CategoryId)" value="category.Id">@catetogy.CategoryName</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label class="visually-hidden" for="sterm">Search by title</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Search by title">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="inlineFormCheck">
+                <label class="form-check-label" for="inlineFormCheck">
+                    Remember me
+                </label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="reset" class="btn btn-primary">Reset</button>
+        </div>
+    </form>
+</div>
+
+<div class="w-100 mt-4 d-flex flex-wrap">
+    @foreach (var product in Model.Products)
+    {
+        <div class="card mx-3 mb-4" style="width: 11rem;">
+            @if (string.IsNullOrEmpty(product.Image))
+            {
+                <img style="width=100%;height=300px" src="/images/NoImage.png" class="card-img-top" alt="...">
+            }
+            else
+            {
+                <img style="width=100%;height=300px" src="/images/@product.Image" class="card-img-top" alt="...">
+            }
+            <div class="card-body">
+                <h5 class="card-title">@product.ProductName</h5>
+                <p class="card-text">
+                    <b>Category:</b>@product.CategoryName <br />
+                    <b>Price:</b>@product.Price
+                </p>
+                <button type="button" onclick="add(@product.Id)" class="btn btn-primary">Add to cart</button>
+            </div>
+        </div>
+    }
+</div>
+
+<footer>
+    <p> ONLINE SPORT SHOP </p>
+    <p> Address: Tan Binh Dist. - Ho Chi Minh City - Vietnam </p>
+    <p> Hotline: +84 123456789 </p>
+    <p> Email: onlinesportshop@gmail.com </p>
+    <p> Website: www.onlinesportshop.com </p>
+</footer>
+
+@section Scripts{
+    <script>
+        function add(productId) {
+            try {
+                var response = fetch(`/Cart/AddItem?productId=${productId}`);
+                if (response.status == 200)
+                    var result = response.json();
+                var cartCountEl = document.getElementById("cartCount");
+                cartCountEl.innerHTML = result;
+                window.location.href = "#cartCount"
+            }
+            catch {
+                console.log(err);
+            }
+        }
+    </script>
+}
